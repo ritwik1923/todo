@@ -86,6 +86,14 @@ class _DraggableSheetState extends State<DraggableSheet> {
                                 : rAddTask(index),
                     ],
                     onReorder: (int oldIndex, int newIndex) {
+                      print("old: $oldIndex ; new: $newIndex");
+                      // prevent exception
+                      if (oldIndex < 0 ||
+                          oldIndex >= item.length ||
+                          newIndex < 0 ||
+                          newIndex >= item.length) {
+                        return;
+                      }
                       setState(() {
                         if (oldIndex < newIndex) {
                           newIndex -= 1;
