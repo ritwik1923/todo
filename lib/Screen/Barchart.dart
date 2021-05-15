@@ -17,7 +17,7 @@ const kStyle =
 class BarChart extends StatelessWidget {
   final List<DailyPerformance> data;
 
-  BarChart({required this.data});
+  BarChart({@required this.data});
   @override
   Widget build(BuildContext context) {
     List<charts.Series<DailyPerformance, String>> series = [
@@ -79,7 +79,7 @@ class BarChart extends StatelessWidget {
 class LineChart extends StatelessWidget {
   final List<DailyPerformance> data;
 
-  LineChart({required this.data});
+  LineChart({@required this.data});
 
   @override
   Widget build(BuildContext context) {

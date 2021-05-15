@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/Screen/draggable.dart';
 import 'package:todo/todo.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'AddTask.dart';
 import 'constrant.dart';
 
@@ -65,82 +65,119 @@ class _MyAppState extends State<MyApp> {
           ),
           body: TodoList(),
           floatingActionButton: Builder(
-            builder: (context) => FloatingActionButton(
-                backgroundColor: Color(0xFFFF0067),
-                child: Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  print("pressed");
-                  showModalBottomSheet(
-                      context: context,
-                      backgroundColor: Colors.transparent,
-                      isScrollControlled: true,
-                      builder: (context) {
-                        return DraggableSheet();
-                      });
+            builder: (context) => FloatingActionButton.extended(
+              backgroundColor: Color(0xFFFF0067),
+              // child: Row(
+              //   children: [
+              //     Icon(
+              //       Icons.add,
+              //       color: Colors.white,
+              //     ),
+              //     Text("data")
+              //   ],
+              // ),
+              tooltip: 'Increment',
+              icon:
+                  // Text(
+                  //   "+",
+                  //   style: TextStyle(
+                  //     color: Colors.white,
+                  //     fontSize: 40,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
+                  new Icon(
+                Icons.add,
+                color: Colors.white,
+                size: 40,
+                textDirection: TextDirection.rtl,
+              ),
+              // FaIcon(
+              //   FontAwesomeIcons.gamepad,
+              //   size: 30,
+              // ),
 
-                  // showModalBottomSheet(
-                  //     context: context,
-                  //     isScrollControlled: true,
-                  //     backgroundColor: Colors.transparent,
-                  //     builder: (context) {
-                  //       return DraggableScrollableSheet(
-                  //         initialChildSize: 0.8,
-                  //         builder: (BuildContext context,
-                  //             ScrollController scrollController) {
-                  //           return SingleChildScrollView(
-                  //             controller: scrollController,
-                  //             child: Container(
-                  //                 decoration: BoxDecoration(
-                  //                   color: Colors.red,
-                  //                   borderRadius: BorderRadius.only(
-                  //                     topLeft: const Radius.circular(10),
-                  //                     topRight: const Radius.circular(10),
-                  //                   ),
-                  //                 ),
-                  //                 child: Column(
-                  //                   mainAxisSize: MainAxisSize.min,
-                  //                   children: <Widget>[
-                  //                     ListTile(
-                  //                       leading: new Icon(Icons.photo),
-                  //                       title: new Text('Photo'),
-                  //                       onTap: () {
-                  //                         Navigator.pop(context);
-                  //                       },
-                  //                     ),
-                  //                     ListTile(
-                  //                       leading: new Icon(Icons.music_note),
-                  //                       title: new Text('Music'),
-                  //                       onTap: () {
-                  //                         Navigator.pop(context);
-                  //                       },
-                  //                     ),
-                  //                     ListTile(
-                  //                       leading: new Icon(Icons.videocam),
-                  //                       title: new Text('Video'),
-                  //                       onTap: () {
-                  //                         Navigator.pop(context);
-                  //                       },
-                  //                     ),
-                  //                     ListTile(
-                  //                       leading: new Icon(Icons.share),
-                  //                       title: new Text('Share'),
-                  //                       onTap: () {
-                  //                         Navigator.pop(context);
-                  //                       },
-                  //                     ),
-                  //                   ],
-                  //                 )
-                  //                 //       "assets/images/trigger_warning_prompt.jpg"),
-                  //                 ),
-                  //           );
-                  //         },
-                  //       );
-                  //     });
-                }),
-          )),
+              label: Text(
+                "add task",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+
+              onPressed: () {
+                print("pressed");
+                showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return DraggableSheet();
+                    });
+
+                // showModalBottomSheet(
+                //     context: context,
+                //     isScrollControlled: true,
+                //     backgroundColor: Colors.transparent,
+                //     builder: (context) {
+                //       return DraggableScrollableSheet(
+                //         initialChildSize: 0.8,
+                //         builder: (BuildContext context,
+                //             ScrollController scrollController) {
+                //           return SingleChildScrollView(
+                //             controller: scrollController,
+                //             child: Container(
+                //                 decoration: BoxDecoration(
+                //                   color: Colors.red,
+                //                   borderRadius: BorderRadius.only(
+                //                     topLeft: const Radius.circular(10),
+                //                     topRight: const Radius.circular(10),
+                //                   ),
+                //                 ),
+                //                 child: Column(
+                //                   mainAxisSize: MainAxisSize.min,
+                //                   children: <Widget>[
+                //                     ListTile(
+                //                       leading: new Icon(Icons.photo),
+                //                       title: new Text('Photo'),
+                //                       onTap: () {
+                //                         Navigator.pop(context);
+                //                       },
+                //                     ),
+                //                     ListTile(
+                //                       leading: new Icon(Icons.music_note),
+                //                       title: new Text('Music'),
+                //                       onTap: () {
+                //                         Navigator.pop(context);
+                //                       },
+                //                     ),
+                //                     ListTile(
+                //                       leading: new Icon(Icons.videocam),
+                //                       title: new Text('Video'),
+                //                       onTap: () {
+                //                         Navigator.pop(context);
+                //                       },
+                //                     ),
+                //                     ListTile(
+                //                       leading: new Icon(Icons.share),
+                //                       title: new Text('Share'),
+                //                       onTap: () {
+                //                         Navigator.pop(context);
+                //                       },
+                //                     ),
+                //                   ],
+                //                 )
+                //                 //       "assets/images/trigger_warning_prompt.jpg"),
+                //                 ),
+                //           );
+                //         },
+                //       );
+                //     });
+              },
+            ),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat),
     );
   }
 }
