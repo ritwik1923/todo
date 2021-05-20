@@ -2,14 +2,13 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/foundation.dart';
 
 class AddTask {
-  String task = "Add task here";
+  String task = "";
   bool isDone = false;
   bool isSubtask = false;
-  List<String> subtask = [];
-  // AddTask(this.task);
 
-  void ismarkedDone(bool marked) {
-    this.isDone = marked;
+  AddTask({this.task, this.isDone, this.isSubtask});
+  void ismarkedDone() {
+    this.isDone = !this.isDone;
   }
 
   void addTask(String task) {
@@ -23,6 +22,22 @@ class AddTask {
   String getTask() {
     return this.task;
   }
+
+  factory AddTask.fromMap(Map<String, dynamic> json) {
+    print("fmap: ${json["task"]}");
+
+    return AddTask(
+        isDone: json["done"] == "true" ? true : false,
+        isSubtask: json["isSubtask"] == "true" ? true : false,
+        task: json["task"]);
+  }
+  Map<String, dynamic> toMap() => {
+        "done": isDone == true ? "true" : "false",
+        "isSubtask": isSubtask == true ? "true" : "false",
+        "task": task,
+        //  TODO: ADD subtask here
+        // "isSubtask": isSubtask,
+      };
 }
 
 // TODO: Parsing & unparsing of data
@@ -42,8 +57,8 @@ class StoreTask {
       );
   //converting to json inorder to store data
   Map<String, dynamic> toMap() => {
-        "alltask": alltask,
         "dateTime": dateTime,
+        "alltask": alltask,
       };
 }
 

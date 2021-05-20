@@ -1,10 +1,16 @@
+import 'dart:convert';
+import 'package:todo/constrant.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/Screen/draggable.dart';
-import 'package:todo/todo.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:todo/Screen/todo.dart';
 import 'AddTask.dart';
 import 'constrant.dart';
+import 'package:intl/intl.dart';
+
+import 'database/db_helper.dart';
+// import '';
 
 void main() {
   runApp(MyApp());
@@ -16,10 +22,19 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  DB_Helper db = DB_Helper();
+
+  String formatted = "";
   void initState() {
-    for (int i = 0; i < 3; i++) {
-      item.add(AddTask());
-    }
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    formatted = formatter.format(now);
+
+    db.initializeDatabase().then((value) {
+      loaddata();
+      print('------database intialized $kScore');
+    });
+    super.initState();
   }
 
   TextStyle _style = TextStyle(fontSize: 55);
@@ -46,57 +61,18 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Theme',
       home: Scaffold(
-          appBar: AppBar(
-            title: Text('Todo'),
-            centerTitle: true,
-            actions: [
-              FlatButton(
-                onPressed: () {
-                  setState(() {
-                    _isDark = !_isDark;
-                  });
-                },
-                child: Icon(
-                  Icons.menu,
-                  size: 40,
-                ),
-              )
-            ],
-          ),
-          body: TodoList(),
+          body: CollapsingList(),
+          // TodoList(),
+
           floatingActionButton: Builder(
             builder: (context) => FloatingActionButton.extended(
-              backgroundColor: Color(0xFFFF0067),
-              // child: Row(
-              //   children: [
-              //     Icon(
-              //       Icons.add,
-              //       color: Colors.white,
-              //     ),
-              //     Text("data")
-              //   ],
-              // ),
-              tooltip: 'Increment',
-              icon:
-                  // Text(
-                  //   "+",
-                  //   style: TextStyle(
-                  //     color: Colors.white,
-                  //     fontSize: 40,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                  new Icon(
+              backgroundColor: Color(0xFF272B4C),
+              icon: new Icon(
                 Icons.add,
                 color: Colors.white,
                 size: 40,
-                textDirection: TextDirection.rtl,
+                // textDirection: TextDirection.LTR,
               ),
-              // FaIcon(
-              //   FontAwesomeIcons.gamepad,
-              //   size: 30,
-              // ),
-
               label: Text(
                 "add task",
                 style: TextStyle(
@@ -104,80 +80,87 @@ class _MyAppState extends State<MyApp> {
                   fontSize: 20,
                 ),
               ),
-
               onPressed: () {
                 print("pressed");
+                loaddata();
                 showModalBottomSheet(
                     context: context,
                     backgroundColor: Colors.transparent,
                     isScrollControlled: true,
                     builder: (context) {
                       return DraggableSheet();
-                    });
+                      Container(
+                        height: 300,
+                        width: 300,
+                        color: Colors.pinkAccent,
+                      );
+                    }).then((value) async {
+                  setState(() {
+                    List<String> data = [];
+                    for (int index = 0; index < item.length; index++) {
+                      data.add(jsonEncode(item[index].toMap()));
+                    }
 
-                // showModalBottomSheet(
-                //     context: context,
-                //     isScrollControlled: true,
-                //     backgroundColor: Colors.transparent,
-                //     builder: (context) {
-                //       return DraggableScrollableSheet(
-                //         initialChildSize: 0.8,
-                //         builder: (BuildContext context,
-                //             ScrollController scrollController) {
-                //           return SingleChildScrollView(
-                //             controller: scrollController,
-                //             child: Container(
-                //                 decoration: BoxDecoration(
-                //                   color: Colors.red,
-                //                   borderRadius: BorderRadius.only(
-                //                     topLeft: const Radius.circular(10),
-                //                     topRight: const Radius.circular(10),
-                //                   ),
-                //                 ),
-                //                 child: Column(
-                //                   mainAxisSize: MainAxisSize.min,
-                //                   children: <Widget>[
-                //                     ListTile(
-                //                       leading: new Icon(Icons.photo),
-                //                       title: new Text('Photo'),
-                //                       onTap: () {
-                //                         Navigator.pop(context);
-                //                       },
-                //                     ),
-                //                     ListTile(
-                //                       leading: new Icon(Icons.music_note),
-                //                       title: new Text('Music'),
-                //                       onTap: () {
-                //                         Navigator.pop(context);
-                //                       },
-                //                     ),
-                //                     ListTile(
-                //                       leading: new Icon(Icons.videocam),
-                //                       title: new Text('Video'),
-                //                       onTap: () {
-                //                         Navigator.pop(context);
-                //                       },
-                //                     ),
-                //                     ListTile(
-                //                       leading: new Icon(Icons.share),
-                //                       title: new Text('Share'),
-                //                       onTap: () {
-                //                         Navigator.pop(context);
-                //                       },
-                //                     ),
-                //                   ],
-                //                 )
-                //                 //       "assets/images/trigger_warning_prompt.jpg"),
-                //                 ),
-                //           );
-                //         },
-                //       );
-                //     });
+                    String d = "$data";
+                    // ignore: non_constant_identifier_names
+                    var STodod = StoreTask(dateTime: formatted, alltask: d);
+                    print("res: $STodod");
+                    db.insertTodo(STodod);
+                  });
+                });
               },
             ),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat),
     );
+  }
+
+  Future<void> loaddata() async {
+    StoreTask storeddata = await db.getTodo(formatted);
+    // print("${storeddata[].dateTime} : ")
+    if (storeddata != null) {
+      print("${storeddata.dateTime}: ${storeddata.alltask}");
+
+      // List<String> dd = storeddata.alltask as List<String>;
+      var x = jsonDecode(storeddata.alltask);
+      // var x = storeddata.alltask;
+      print(x);
+      print("len: ${x.length}");
+      item.clear();
+      int score = 0, total = 0;
+      for (int i = 0; i < x.length; i++) {
+        if (i < 1) {
+          if (x[i]["done"] == "true") score += 5;
+          total += 5;
+        } else if (i < 4) {
+          if (x[i]["done"] == "true") score += 3;
+          total += 3;
+        } else {
+          if (x[i]["done"] == "true") score += 1;
+          total += 1;
+        }
+        var xx = AddTask.fromMap(x[i]);
+        //TODO : loading screen
+        item.add(AddTask(
+            task: x[i]["task"],
+            isDone: x[i]["done"] == "true" ? true : false,
+            isSubtask: x[i]["isSubtask"] == "true" ? true : false));
+        //TODO: (DONE) load data to todo app from db
+        print("$i:   ${x[i]["done"]} ");
+        // if (x[i]["issubtask"] == "1") {
+        //   for (int j = 0; j < x[i]["subtask"].length; j++)
+        //     print("\t${x[i]["subtask"][j]}");
+        // } else {
+        //   print("no Subtask");
+        // }
+      }
+      print("db Your Score: $score/$total");
+      setState(() {
+        kScore = score / total * 1;
+      });
+    } else {
+      print("not data");
+    }
   }
 }

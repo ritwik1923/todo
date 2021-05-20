@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:todo/constrant.dart';
 
 import 'dart:math';
 
 import '../AddTask.dart';
 import 'Barchart.dart';
-
-// void main() {
-//   runApp(MaterialApp(home: Scaffold(body: SamplePage())));
-// }
 
 class SamplePage extends StatefulWidget {
   @override
@@ -56,50 +53,57 @@ class _SamplePageState extends State<SamplePage> {
               SizedBox(
                 height: hh,
               ),
-              Card(
-                elevation: 5,
-                child: Container(
-                  padding: EdgeInsets.all(8),
-                  child: new CircularPercentIndicator(
-                    radius: 180.0,
-                    lineWidth: 20.0,
-                    animation: true,
-                    percent: 0.7,
-                    center: new Text(
-                      "99.00%",
-                      style: new TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 35.0),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    "${(kScore * 10).toStringAsPrecision(3)}%",
+                    style: new TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 35.0),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    child: new CircularPercentIndicator(
+                      radius: 90.0,
+                      lineWidth: 20.0,
+                      animation: true,
+                      percent: kScore,
+                      // center: new Text(
+                      //   "${(kScore * 10).toStringAsPrecision(3)}%",
+                      //   style: new TextStyle(
+                      //       fontWeight: FontWeight.bold, fontSize: 35.0),
+                      // ),
+                      circularStrokeCap: CircularStrokeCap.round,
+                      progressColor: Color(0xFF2296F3),
                     ),
-                    circularStrokeCap: CircularStrokeCap.round,
-                    progressColor: Color(0xFF2296F3),
                   ),
-                ),
+                ],
               ),
-              SizedBox(
-                height: hh,
-              ),
-              Card(
-                elevation: 5,
-                child: Container(
-                  padding: EdgeInsets.all(8),
-                  child: BarChart(
-                    data: data,
-                  ),
-                ),
-              ),
-              // LineChart(data: data),
-              SizedBox(
-                height: hh,
-              ),
-              Card(
-                elevation: 5,
-                child: Container(
-                  padding: EdgeInsets.all(8),
-                  child: LineChart(
-                    data: data,
-                  ),
-                ),
-              ),
+              // SizedBox(
+              //   height: hh,
+              // ),
+              // Card(
+              //   elevation: 5,
+              //   child: Container(
+              //     padding: EdgeInsets.all(8),
+              //     child: BarChart(
+              //       data: data,
+              //     ),
+              //   ),
+              // ),
+              // // LineChart(data: data),
+              // SizedBox(
+              //   height: hh,
+              // ),
+              // Card(
+              //   elevation: 5,
+              //   child: Container(
+              //     padding: EdgeInsets.all(8),
+              //     child: LineChart(
+              //       data: data,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

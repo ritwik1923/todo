@@ -5,3 +5,4 @@ import 'package:todo/AddTask.dart';
 final List<AddTask> item = [];
 double barWeidth = 50;
 double barHeight = 5;
+double kScore = 0;

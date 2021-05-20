@@ -14,7 +14,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return DraggableScrollableSheet(
-      initialChildSize: 0.95,
+      initialChildSize: 1,
       minChildSize: 0.03,
       maxChildSize: 1,
       builder: (BuildContext context, ScrollController scrollController) {
@@ -22,26 +22,9 @@ class _DraggableSheetState extends State<DraggableSheet> {
           children: [
             SafeArea(
               child: Scaffold(
-                appBar: AppBar(
-                  // title: Text('exit'),
-                  centerTitle: true,
-                  actions: [
-                    FlatButton(
-                      onPressed: () {
-                        setState(() {
-                          // _isDark = !_isDark;
-                        });
-                      },
-                      child: Icon(
-                        Icons.menu,
-                        size: 40,
-                      ),
-                    )
-                  ],
-                ),
+                appBar: AppBar(),
                 body: Container(
                   decoration: BoxDecoration(
-                    // color: Colors.orange,
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(15.0),
@@ -53,37 +36,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
                     buildDefaultDragHandles: false,
                     children: <Widget>[
                       for (int index = 0; index <= item.length; index++)
-                        index != item.length
-                            ? index == 0
-                                ? Column(
-                                    key: Key('$index'),
-                                    children: [
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      //rowBar(),
-                                      rList(index)
-                                    ],
-                                  )
-                                : rList(index)
-                            : item.length == 0
-                                ? Column(
-                                    key: Key('$index'),
-                                    children: [
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      //rowBar(),
-                                      Container(
-                                        key: Key('$index'),
-                                        // color: item[index].isOdd ? oddItemColor : evenItemColor,
-                                        child: Row(
-                                          children: <Widget>[rAddTask(index)],
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                : rAddTask(index),
+                        index != item.length ? rList(index) : rAddTask(index),
                     ],
                     onReorder: (int oldIndex, int newIndex) {
                       print("old: $oldIndex ; new: $newIndex");
@@ -110,10 +63,6 @@ class _DraggableSheetState extends State<DraggableSheet> {
         );
       },
     );
-
-    //  buttomSheet() {
-
-    //   }
   }
 
   Widget rAddTask(index) {
@@ -125,8 +74,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Color(0xFFFF0067),
-              // color: Colors.orange,
+              // color: Color(0xFF272B4C),
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.all(
                 Radius.circular(15.0),
@@ -146,7 +94,8 @@ class _DraggableSheetState extends State<DraggableSheet> {
                 ),
                 onPressed: () {
                   setState(() {
-                    item.add(AddTask());
+                    item.add(
+                        AddTask(isDone: false, isSubtask: false, task: ""));
                     for (int index = 0; index < item.length; index++) {
                       print(
                           "$index ${item[index].getMarkedDone()} ${item[index].getTask()}");
@@ -178,19 +127,20 @@ class _DraggableSheetState extends State<DraggableSheet> {
   }
 
   Widget rList(int index) {
-    // index -= 1;
     final productName = item[index];
     return Dismissible(
       key: ValueKey(productName),
       background: slideRightBackground(),
       secondaryBackground: slideLeftBackground(),
       confirmDismiss: (direction) async {
+        // ignore: missing_return
         if (direction == DismissDirection.endToStart) {
           // final bool res =
-          await showDialog(
+          return await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
+                  // TODO: improve deleting ui task
                   content:
                       Text("Are you sure you want to delete ${index + 1}?"),
                   actions: <Widget>[
@@ -223,19 +173,16 @@ class _DraggableSheetState extends State<DraggableSheet> {
           // return res;
         } else {
           // TODO: Navigate to edit page;
+          return null;
         }
       },
       child: InkWell(
         child: Container(
           key: ValueKey(productName),
-          // color: item[index].isOdd ? Colors.yellowAccent : Colors.greenAccent,
           child: Row(
-            // crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                // width: 64,
                 height: 64,
-                // padding: const EdgeInsets.all(8),
                 margin: EdgeInsets.only(left: 8),
                 child: ReorderableDragStartListener(
                   index: index,
@@ -244,12 +191,14 @@ class _DraggableSheetState extends State<DraggableSheet> {
                   ),
                 ),
               ),
+              // TODO: inputing task over here
               Checkbox(
-                value: item[index].getMarkedDone(),
+                value: item[index].getMarkedDone() == true ? true : false,
+                activeColor: Color(0xFF272B4C),
                 // splashRadius: 10,
                 onChanged: (value) {
                   setState(() {
-                    item[index].ismarkedDone(value!);
+                    item[index].ismarkedDone();
                     // ticked = value!;
                   });
                 },
@@ -257,6 +206,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
               Expanded(
                 child: Container(
                   child: TextFormField(
+                    initialValue: item[index].getTask(),
                     keyboardType: TextInputType.multiline,
                     minLines: 1, //Normal textInputField will be displayed
                     maxLines: 10, // when user presses enter it will adapt to it
@@ -264,7 +214,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
                       print(value);
                       item[index].addTask(value);
 
-                      //Do something with the user input.
+                      //TODO: Do something with the user input.
                     },
                     decoration: new InputDecoration(
                         border: InputBorder.none,
