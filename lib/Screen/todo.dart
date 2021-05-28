@@ -1,51 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import '../AddTask.dart';
 import '../constrant.dart';
+import 'Barchart.dart';
 import 'background.dart';
 import 'dart:math' as math;
-
-class Todo extends StatefulWidget {
-  @override
-  _TodoState createState() => _TodoState();
-}
-
-class _TodoState extends State<Todo> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Todiio"),
-        actions: [
-          Icon(
-            Icons.menu,
-            size: 40,
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class TodoList extends StatefulWidget {
-  @override
-  _TodoListState createState() => _TodoListState();
-}
-
-class _TodoListState extends State<TodoList> {
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SamplePage(),
-          // DraggableSheet()
-        ],
-      ),
-    );
-  }
-}
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  double hh = 10;
+
   _SliverAppBarDelegate({
     @required this.minHeight,
     @required this.maxHeight,
@@ -73,6 +39,14 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 }
 
 class CollapsingList extends StatelessWidget {
+  var random = new Random();
+  final List<DailyPerformance> data = List<DailyPerformance>.generate(
+      10,
+      (int index) => DailyPerformance(
+            year: index,
+            subscribers: generateRandomNumber(),
+            barColor: charts.ColorUtil.fromDartColor(Colors.blue),
+          ));
   SliverPersistentHeader makeHeader(String headerText) {
     return SliverPersistentHeader(
       pinned: true,
@@ -104,13 +78,19 @@ class CollapsingList extends StatelessWidget {
         Container(
           child: Column(
             children: [
-              Container(
-                height: size * 0.3,
-                color: Color(0xFFFFA012),
+              Expanded(
+                flex: 3,
+                child: Container(
+                  // height: size * 0.3,
+                  color: Color(0xFFFFA012),
+                ),
               ),
-              Container(
-                height: size * 0.7,
-                color: Color(0xFF141438),
+              Expanded(
+                flex: 7,
+                child: Container(
+                  // height: size * 0.6,
+                  color: Color(0xFF141438),
+                ),
               )
             ],
           ),
@@ -125,11 +105,10 @@ class CollapsingList extends StatelessWidget {
                   delegate: SliverChildListDelegate(
                     [
                       ConstrainedBox(
-                        // TODO: prevent overlayer of widget
                         constraints: BoxConstraints(
                             minHeight: 266, maxHeight: 350, maxWidth: 250),
                         child: Container(
-                          height: graphHeight * 1.56,
+                          height: graphHeight * 1.86,
                           decoration: BoxDecoration(
                             color: Color(0xFF272B4C),
                             shape: BoxShape.rectangle,
@@ -137,106 +116,7 @@ class CollapsingList extends StatelessWidget {
                               Radius.circular(15.0),
                             ),
                           ),
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                                top: 15.0, left: 15, right: 15),
-                            child: Column(
-                              // mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "${(kScore * 10).toStringAsPrecision(3)}%",
-                                      style: new TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30.0),
-                                    ),
-                                    new CircularPercentIndicator(
-                                      radius: 75.0,
-                                      lineWidth: 15.0,
-                                      animation: true,
-                                      percent: kScore,
-                                      // center: new Text(
-                                      //   "${(kScore * 10).toStringAsPrecision(3)}%",
-                                      //   style: new TextStyle(
-                                      //       fontWeight: FontWeight.bold, fontSize: 35.0),
-                                      // ),
-                                      circularStrokeCap:
-                                          CircularStrokeCap.round,
-                                      progressColor: Color(0xFF026FE7),
-                                      backgroundColor: Color(0xFF868686),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  child: Divider(
-                                    thickness: 4,
-                                    indent: 20,
-                                    endIndent: 20,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    print(
-                                        "progress page open ${MediaQuery.of(context).size.width}");
-                                  },
-                                  child: Text(
-                                    "Progress",
-                                    style: new TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 25.0),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: (graphHeight * 1.56 - (15 * 2)) *
-                                      0.085, //20
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    print(
-                                        "Plan tom page open ${graphHeight * 1.56} ${(graphHeight * 1.56 - (15 * 2)) * 0.085}");
-                                  },
-                                  child: Text(
-                                    "Plan Tommorow",
-                                    style: new TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 25.0),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height:
-                                      (graphHeight * 1.56 - (15 * 2)) * 0.085 +
-                                          0, //45
-                                ),
-                                SizedBox(
-                                  // height: 50,
-                                  child: Divider(
-                                    thickness: 4,
-                                    indent: 20,
-                                    endIndent: 20,
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      print("View more");
-                                    },
-                                    child: Text(
-                                      "View More",
-                                      style: new TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 25.0),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          child: detailWidget(graphHeight),
                         ),
                       ),
                       SizedBox(
@@ -252,6 +132,7 @@ class CollapsingList extends StatelessWidget {
                             Radius.circular(15.0),
                           ),
                         ),
+                        child: LineChart(data: data),
                       ),
                       SizedBox(
                         height: size * .5,
@@ -264,6 +145,146 @@ class CollapsingList extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget detailWidget(double graphHeight) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            top: 10.0,
+            right: 0.0,
+            left: 0.0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${(kScore * 10).toStringAsPrecision(3)}",
+                          style: kTextStyle(30),
+                        ),
+                        Text(
+                          "${ktaskdone == ktotaltask && ktotaltask != 0 ? "All done" : ktotaltask == 0 ? "New day New Start" : "Still $ktaskdone left out of $ktotaltask tasks to goal"}",
+                          style: new TextStyle(
+                              fontWeight: FontWeight.normal, fontSize: 15.0),
+                        ),
+                      ],
+                    ),
+                    new CircularPercentIndicator(
+                      radius: 75.0,
+                      lineWidth: 15.0,
+                      animation: true,
+                      percent: kScore,
+                      // center: new Text(
+                      //   "${(kScore * 10).toStringAsPrecision(3)}%",
+                      //   style: new TextStyle(
+                      //       fontWeight: FontWeight.bold, fontSize: 35.0),
+                      // ),
+                      circularStrokeCap: CircularStrokeCap.round,
+                      progressColor: Color(0xFFFFA012), //Color(0xFF026FE7),
+                      backgroundColor: Color(0xFF868686),
+                    ),
+                  ],
+                ),
+                Divider(
+                  thickness: 2,
+                  indent: 20,
+                  endIndent: 20,
+                ),
+                rTilelist(
+                  avatarColor: Color(0xFF399500),
+                  image: 'assets/images/progress.png',
+                  text: klable1,
+                  subtext: ksubtext1,
+                  onPress: () {},
+                ),
+                rTilelist(
+                  avatarColor: Color(0xFFFFA012),
+                  image: 'assets/images/future.png',
+                  text: klable2,
+                  subtext: ksubtext2,
+                  onPress: () {},
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+              bottom: 5.0,
+              right: 0.0,
+              left: 0.0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Divider(
+                    thickness: 2,
+                    indent: 20,
+                    endIndent: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Container(
+                        // color: Colors.blue,
+                        child: Text(
+                      'View More',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    )),
+                  ),
+                ],
+              )),
+        ],
+      ),
+    );
+  }
+}
+
+class rTilelist extends StatelessWidget {
+  final String text;
+  final String subtext;
+  final String image;
+  final Function onPress;
+  final Color avatarColor;
+
+  const rTilelist(
+      {@required this.text,
+      @required this.avatarColor,
+      @required this.subtext,
+      @required this.image,
+      @required this.onPress});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPress,
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: ListTile(
+          // minVerticalPadding: 10,
+          contentPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+          leading: CircleAvatar(
+              backgroundColor: avatarColor,
+              child: Center(
+                child: Image.asset(
+                  image,
+                  height: 20,
+                  width: 20,
+                ),
+              )),
+          title: Text(
+            "$text",
+            style: kTextStyle(25),
+          ),
+          subtitle: Text("$subtext", style: kSubTextStyle),
+        ),
+      ),
     );
   }
 }

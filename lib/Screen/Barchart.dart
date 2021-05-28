@@ -95,7 +95,7 @@ class LineChart extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Container(
           height: 150,
-          width: data.length * 10.00,
+          width: data.length * 50.00,
           // padding: EdgeInsets.all(20),
           child: charts.LineChart(
             series,

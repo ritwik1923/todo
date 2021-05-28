@@ -10,58 +10,114 @@ class DraggableSheet extends StatefulWidget {
 
 class _DraggableSheetState extends State<DraggableSheet> {
   @override
+
+  // Widget build(BuildContext context) {
+  //   // TODO: implement build
+  //   return Padding(
+  //     padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 10),
+  //     child: DraggableScrollableSheet(
+  //       initialChildSize: 1,
+  //       minChildSize: 0.00,
+  //       maxChildSize: 1,
+  //       builder: (BuildContext context, ScrollController scrollController) {
+  //         return Stack(
+  //           children: [
+  //             SafeArea(
+  //               child: Scaffold(
+  //                 appBar: AppBar(
+  //                   title: Text("${MediaQuery.of(context).padding.top}"),
+  //                 ),
+  //                 body: SafeArea(
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                       shape: BoxShape.rectangle,
+  //                       borderRadius: BorderRadius.only(
+  //                         topLeft: Radius.circular(15.0),
+  //                         topRight: Radius.circular(15.0),
+  //                       ),
+  //                     ),
+  //                     child: ReorderableListView(
+  //                       scrollController: scrollController,
+  //                       buildDefaultDragHandles: false,
+  //                       children: <Widget>[
+  //                         for (int index = 0; index <= item.length; index++)
+  //                           index != item.length
+  //                               ? rList(index)
+  //                               : rAddTask(index),
+  //                       ],
+  //                       onReorder: (int oldIndex, int newIndex) {
+  //                         print("old: $oldIndex ; new: $newIndex");
+  //                         // prevent exception
+  //                         if (oldIndex < 0 ||
+  //                             oldIndex >= item.length ||
+  //                             newIndex < 0 ||
+  //                             newIndex >= item.length) {
+  //                           return;
+  //                         }
+  //                         setState(() {
+  //                           if (oldIndex < newIndex) {
+  //                             newIndex -= 1;
+  //                           }
+  //                           final i = item.removeAt(oldIndex);
+  //                           item.insert(newIndex, i);
+  //                         });
+  //                       },
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+
+  //             ,
+  //           ],
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return DraggableScrollableSheet(
-      initialChildSize: 1,
-      minChildSize: 0.03,
-      maxChildSize: 1,
-      builder: (BuildContext context, ScrollController scrollController) {
-        return Stack(
-          children: [
-            SafeArea(
-              child: Scaffold(
-                appBar: AppBar(),
-                body: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(15.0),
-                      topRight: Radius.circular(15.0),
-                    ),
-                  ),
-                  child: ReorderableListView(
-                    scrollController: scrollController,
-                    buildDefaultDragHandles: false,
-                    children: <Widget>[
-                      for (int index = 0; index <= item.length; index++)
-                        index != item.length ? rList(index) : rAddTask(index),
-                    ],
-                    onReorder: (int oldIndex, int newIndex) {
-                      print("old: $oldIndex ; new: $newIndex");
-                      // prevent exception
-                      if (oldIndex < 0 ||
-                          oldIndex >= item.length ||
-                          newIndex < 0 ||
-                          newIndex >= item.length) {
-                        return;
-                      }
-                      setState(() {
-                        if (oldIndex < newIndex) {
-                          newIndex -= 1;
-                        }
-                        final i = item.removeAt(oldIndex);
-                        item.insert(newIndex, i);
-                      });
-                    },
-                  ),
-                ),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("${MediaQuery.of(context).padding.top}"),
+        ),
+        body: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15.0),
+                topRight: Radius.circular(15.0),
               ),
             ),
-          ],
-        );
-      },
+            child: ReorderableListView(
+              // scrollController: scrollController,
+              buildDefaultDragHandles: false,
+              children: <Widget>[
+                for (int index = 0; index <= item.length; index++)
+                  index != item.length ? rList(index) : rAddTask(index),
+              ],
+              onReorder: (int oldIndex, int newIndex) {
+                print("old: $oldIndex ; new: $newIndex");
+                // prevent exception
+                if (oldIndex < 0 ||
+                    oldIndex >= item.length ||
+                    newIndex < 0 ||
+                    newIndex >= item.length) {
+                  return;
+                }
+                setState(() {
+                  if (oldIndex < newIndex) {
+                    newIndex -= 1;
+                  }
+                  final i = item.removeAt(oldIndex);
+                  item.insert(newIndex, i);
+                });
+              },
+            ),
+          ),
+        ),
+      ),
     );
   }
 

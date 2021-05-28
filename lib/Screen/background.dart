@@ -79,31 +79,6 @@ class _SamplePageState extends State<SamplePage> {
                   ),
                 ],
               ),
-              // SizedBox(
-              //   height: hh,
-              // ),
-              // Card(
-              //   elevation: 5,
-              //   child: Container(
-              //     padding: EdgeInsets.all(8),
-              //     child: BarChart(
-              //       data: data,
-              //     ),
-              //   ),
-              // ),
-              // // LineChart(data: data),
-              // SizedBox(
-              //   height: hh,
-              // ),
-              // Card(
-              //   elevation: 5,
-              //   child: Container(
-              //     padding: EdgeInsets.all(8),
-              //     child: LineChart(
-              //       data: data,
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),

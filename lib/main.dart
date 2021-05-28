@@ -10,33 +10,12 @@ import 'constrant.dart';
 import 'package:intl/intl.dart';
 
 import 'database/db_helper.dart';
-// import '';
 
 void main() {
-  runApp(MyApp());
+  runApp(Todo());
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  DB_Helper db = DB_Helper();
-
-  String formatted = "";
-  void initState() {
-    final DateTime now = DateTime.now();
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    formatted = formatter.format(now);
-
-    db.initializeDatabase().then((value) {
-      loaddata();
-      print('------database intialized $kScore');
-    });
-    super.initState();
-  }
-
+class Todo extends StatelessWidget {
   TextStyle _style = TextStyle(fontSize: 55);
   bool _isDark = true;
   ThemeData _light = ThemeData.light().copyWith(
@@ -52,6 +31,7 @@ class _MyAppState extends State<MyApp> {
     cardColor: Color(0xFF272A4D),
     // Color(0xFF272A4D),
   );
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -60,10 +40,115 @@ class _MyAppState extends State<MyApp> {
       themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       title: 'Flutter Theme',
-      home: Scaffold(
-          body: CollapsingList(),
-          // TodoList(),
+      home: MyApp(),
+    );
+  }
+}
 
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  DB_Helper db = DB_Helper();
+
+  String formatted = "";
+  String onlyDay(DateTime date) {
+    final DateFormat formatter = DateFormat("yyyy-MM-dd");
+    return formatter.format(date);
+  }
+
+  void initState() {
+    formatted = onlyDay(DateTime.now());
+
+    db.initializeDatabase().then((value) {
+      loaddata();
+      print('------database intialized $kScore');
+    });
+    super.initState();
+  }
+
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      StoreData();
+      // user returned to our app
+    } else if (state == AppLifecycleState.inactive) {
+      StoreData();
+      // app is inactive
+    } else if (state == AppLifecycleState.paused) {
+      StoreData();
+      // user is about quit our app temporally
+    } else if (state == AppLifecycleState.detached) {
+      print("detach");
+      StoreData();
+      // app suspended (not used in iOS)
+    }
+  }
+
+  @override
+  void dispose() {
+    StoreData();
+    // WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  Future<bool> StoreData() async {
+    List<String> data = [];
+    for (int i = 0; i < item.length; i++) {
+      data.add(jsonEncode(item[i].toMap()));
+    }
+
+    // TODO: store data before exit
+    String d = "$data";
+    // ignore: non_constant_identifier_names
+    var STodod = StoreTask(dateTime: formatted, alltask: d);
+    print("res: $STodod");
+    bool res = await db.insertTodo(STodod);
+    if (res == true) {
+      print("stored!!..");
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        // final value =
+        return await showDialog<bool>(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                content: Text('Are you sure you want to exit?'),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                  FlatButton(
+                    child: Text('Yes, exit'),
+                    onPressed: () {
+                      StoreData()
+                          .then((value) => Navigator.of(context).pop(true));
+                    },
+                  ),
+                ],
+              );
+            });
+
+        // return value == true;
+      },
+      child: Scaffold(
+          body: SafeArea(
+            child:
+                // Container(),
+                CollapsingList(),
+          ),
           floatingActionButton: Builder(
             builder: (context) => FloatingActionButton.extended(
               backgroundColor: Color(0xFF272B4C),
@@ -71,7 +156,6 @@ class _MyAppState extends State<MyApp> {
                 Icons.add,
                 color: Colors.white,
                 size: 40,
-                // textDirection: TextDirection.LTR,
               ),
               label: Text(
                 "add task",
@@ -82,30 +166,36 @@ class _MyAppState extends State<MyApp> {
               ),
               onPressed: () {
                 print("pressed");
-                loaddata();
-                showModalBottomSheet(
-                    context: context,
-                    backgroundColor: Colors.transparent,
-                    isScrollControlled: true,
-                    builder: (context) {
-                      return DraggableSheet();
-                      Container(
-                        height: 300,
-                        width: 300,
-                        color: Colors.pinkAccent,
-                      );
-                    }).then((value) async {
+                Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DraggableSheet()))
+                    .then((value) async {
                   setState(() {
-                    List<String> data = [];
-                    for (int index = 0; index < item.length; index++) {
-                      data.add(jsonEncode(item[index].toMap()));
+                    int score = 0, total = 0;
+                    ktaskdone = 0;
+                    ktotaltask = 0;
+                    for (int i = 0; i < item.length; i++) {
+                      if (i < 1) {
+                        if (item[i].isDone == true) score += 5;
+                        total += 5;
+                      } else if (i < 4) {
+                        if (item[i].isDone == true) score += 3;
+                        total += 3;
+                      } else {
+                        if (item[i].isDone == true) score += 1;
+                        total += 1;
+                      }
+                      if (item[i].isDone == true) ktaskdone += 1;
                     }
+                    ktotaltask = item.length;
+                    if (total == 0) {
+                      ktotaltask += 1;
+                      total = 1;
+                    }
+                    kScore = score / total;
 
-                    String d = "$data";
-                    // ignore: non_constant_identifier_names
-                    var STodod = StoreTask(dateTime: formatted, alltask: d);
-                    print("res: $STodod");
-                    db.insertTodo(STodod);
+                    // TODO: store data before exit
                   });
                 });
               },
@@ -118,16 +208,15 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> loaddata() async {
     StoreTask storeddata = await db.getTodo(formatted);
-    // print("${storeddata[].dateTime} : ")
     if (storeddata != null) {
       print("${storeddata.dateTime}: ${storeddata.alltask}");
 
-      // List<String> dd = storeddata.alltask as List<String>;
       var x = jsonDecode(storeddata.alltask);
-      // var x = storeddata.alltask;
       print(x);
       print("len: ${x.length}");
       item.clear();
+      ktaskdone = 0;
+      ktotaltask = 0;
       int score = 0, total = 0;
       for (int i = 0; i < x.length; i++) {
         if (i < 1) {
@@ -140,6 +229,7 @@ class _MyAppState extends State<MyApp> {
           if (x[i]["done"] == "true") score += 1;
           total += 1;
         }
+        if (x[i]["done"] == "true") ktaskdone += 1;
         var xx = AddTask.fromMap(x[i]);
         //TODO : loading screen
         item.add(AddTask(
@@ -148,16 +238,15 @@ class _MyAppState extends State<MyApp> {
             isSubtask: x[i]["isSubtask"] == "true" ? true : false));
         //TODO: (DONE) load data to todo app from db
         print("$i:   ${x[i]["done"]} ");
-        // if (x[i]["issubtask"] == "1") {
-        //   for (int j = 0; j < x[i]["subtask"].length; j++)
-        //     print("\t${x[i]["subtask"][j]}");
-        // } else {
-        //   print("no Subtask");
-        // }
       }
       print("db Your Score: $score/$total");
       setState(() {
-        kScore = score / total * 1;
+        ktotaltask = x.length;
+        if (total == 0) {
+          ktotaltask += 1;
+          total = 1;
+        }
+        kScore = score / total;
       });
     } else {
       print("not data");

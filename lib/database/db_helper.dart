@@ -53,50 +53,57 @@ class DB_Helper {
     }
   }
 
-  Future<void> insertTodo(StoreTask dbHelper) async {
+  Future<bool> insertTodo(StoreTask dbHelper) async {
     var db = await this.database;
     try {
       var result = await db.insert(tableTodo, dbHelper.toMap());
       print('Inserting record of ${dbHelper.dateTime} : $result');
+      return true;
     } on Exception catch (e) {
       print("data might be present so updateing it...");
-      updateTodo(dbHelper);
+      return updateTodo(dbHelper);
     }
     // inserting new data in database
   }
 
-  Future<void> updateTodo(StoreTask dbHelper) async {
+  Future<bool> updateTodo(StoreTask dbHelper) async {
     var db = await this.database;
     try {
       var result = await db.update(tableTodo, dbHelper.toMap(),
           where: '$columnDateTime = ?', whereArgs: [dbHelper.dateTime]);
       print('Updating record of ${dbHelper.dateTime} : $result');
+      return true;
     } on Exception catch (e) {
       print(e);
+      return false;
     }
   }
 
-  Future<void> deleteALLTodo() async {
+  Future<bool> deleteALLTodo() async {
     var db = await this.database;
 
     try {
       var result = await db.delete(tableTodo);
       print('Deleted All Database : $result');
+      return true;
       // throw 42;
     } on Exception catch (e) {
       print(e);
+      return false;
     }
   }
 
-  Future<void> deleteTodo(StoreTask dbHelper) async {
+  Future<bool> deleteTodo(StoreTask dbHelper) async {
     var db = await this.database;
     try {
       var result = await db.delete(tableTodo,
           where: '$columnDateTime = ?', whereArgs: [dbHelper.dateTime]);
       print('Deleted record of ${dbHelper.dateTime} : $result');
       // throw 42;
+      return true;
     } on Exception catch (e) {
       print(e);
+      return false;
     }
   }
 

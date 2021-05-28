@@ -25,3 +25,10 @@ flutter:
 
 
   uses-material-design: true
+  # assets:
+  #   - assets/images/future.png
+  #   - assets/images/progress.png
+  assets:
+    - assets/images/future.png
+    - assets/images/progress.png
+  
