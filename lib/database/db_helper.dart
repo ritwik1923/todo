@@ -1,11 +1,12 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
-import 'package:todo/AddTask.dart';
+import 'package:todo/model/AddTask.dart';
 // import 'package:sqlit_test/models/Todo_info.dart';
 
 final String tableTodo = 'todo';
 final String columnTitle = 'alltask';
 final String columnDateTime = 'dateTime';
+final String columnScore = 'score';
 
 class DB_Helper {
   static Database _database;
@@ -43,7 +44,9 @@ class DB_Helper {
           db.execute('''
           create table $tableTodo ( 
           $columnDateTime text primary key,
-          $columnTitle text not null)
+          $columnTitle text not null,
+          $columnScore integer,
+          )
         ''');
         },
       );

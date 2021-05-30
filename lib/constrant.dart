@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo/AddTask.dart';
+import 'package:todo/model/AddTask.dart';
 
 // final item = [];
 final List<AddTask> item = [];
@@ -21,6 +21,11 @@ kTextStyle(double fs) {
   );
 }
 
+const kTodoStyle = TextStyle(
+  fontSize: 50,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+);
 var kSubTextStyle = TextStyle(
   fontSize: 15.0,
 );

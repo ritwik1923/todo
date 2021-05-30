@@ -1,5 +1,5 @@
-import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:flutter/foundation.dart';
+// import 'package:charts_flutter/flutter.dart' as charts;
+// import 'package:flutter/foundation.dart';
 
 class AddTask {
   String task = "";
@@ -45,35 +45,25 @@ class AddTask {
 class StoreTask {
   final String alltask;
   final String dateTime;
+  final int score;
   StoreTask({
     this.alltask,
     this.dateTime,
+    this.score,
   });
 
   // reading data from db & storing it
   factory StoreTask.fromMap(Map<String, dynamic> json) => StoreTask(
         dateTime: json["dateTime"],
         alltask: json["alltask"],
+        score: json["score"],
       );
   //converting to json inorder to store data
   Map<String, dynamic> toMap() => {
         "dateTime": dateTime,
         "alltask": alltask,
+        "score": score * 1000,
       };
-}
-
-class DailyPerformance {
-  final int year;
-
-  final double subscribers;
-
-  final charts.Color barColor;
-
-  DailyPerformance({
-    @required this.year,
-    @required this.subscribers,
-    @required this.barColor,
-  });
 }
 
 // TODO: store data as 'var xx'

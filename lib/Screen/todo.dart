@@ -2,10 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import '../AddTask.dart';
+import 'package:todo/chart/graph.dart';
+import '../model/AddTask.dart';
 import '../constrant.dart';
-import 'Barchart.dart';
-import 'background.dart';
+// import 'Barchart.dart';
+// import 'background.dart';
 import 'dart:math' as math;
 import 'package:charts_flutter/flutter.dart' as charts;
 
@@ -40,13 +41,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
 class CollapsingList extends StatelessWidget {
   var random = new Random();
-  final List<DailyPerformance> data = List<DailyPerformance>.generate(
-      10,
-      (int index) => DailyPerformance(
-            year: index,
-            subscribers: generateRandomNumber(),
-            barColor: charts.ColorUtil.fromDartColor(Colors.blue),
-          ));
+
   SliverPersistentHeader makeHeader(String headerText) {
     return SliverPersistentHeader(
       pinned: true,
@@ -55,15 +50,7 @@ class CollapsingList extends StatelessWidget {
         maxHeight: 180.0,
         child: Container(
             color: Color(0xFFFFA012),
-            child: Center(
-                child: Text(
-              headerText,
-              style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ))),
+            child: Center(child: Text(headerText, style: kTodoStyle))),
       ),
     );
   }
@@ -73,78 +60,82 @@ class CollapsingList extends StatelessWidget {
     double size = MediaQuery.of(context).size.height;
     double graphHeight = size * 0.21;
 
-    return Stack(
-      children: [
-        Container(
-          child: Column(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Container(
-                  // height: size * 0.3,
-                  color: Color(0xFFFFA012),
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            child: Column(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Container(
+                    // height: size * 0.3,
+                    color: Color(0xFFFFA012),
+                  ),
                 ),
-              ),
-              Expanded(
-                flex: 7,
-                child: Container(
-                  // height: size * 0.6,
-                  color: Color(0xFF141438),
-                ),
-              )
-            ],
+                Expanded(
+                  flex: 7,
+                  child: Container(
+                    // height: size * 0.6,
+                    color: Color(0xFF141438),
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-        Container(
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: CustomScrollView(
-              slivers: <Widget>[
-                makeHeader('Todo'),
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      ConstrainedBox(
-                        constraints: BoxConstraints(
-                            minHeight: 266, maxHeight: 350, maxWidth: 250),
-                        child: Container(
-                          height: graphHeight * 1.86,
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  // Hero(tag: "Todotag", child: makeHeader('Todo')),
+                  //  TODO: add hero animation
+                  makeHeader('Todo'),
+                  SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                              minHeight: 266, maxHeight: 350, maxWidth: 250),
+                          child: Container(
+                            height: graphHeight * 1.86,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF272B4C),
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15.0),
+                              ),
+                            ),
+                            child: detailWidget(graphHeight),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          height: graphHeight,
                           decoration: BoxDecoration(
                             color: Color(0xFF272B4C),
+                            // color: Colors.orange,
                             shape: BoxShape.rectangle,
                             borderRadius: BorderRadius.all(
                               Radius.circular(15.0),
                             ),
                           ),
-                          child: detailWidget(graphHeight),
+                          child: Graph(),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        height: graphHeight,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF272B4C),
-                          // color: Colors.orange,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15.0),
-                          ),
+                        SizedBox(
+                          height: size * .5,
                         ),
-                        child: LineChart(data: data),
-                      ),
-                      SizedBox(
-                        height: size * .5,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
