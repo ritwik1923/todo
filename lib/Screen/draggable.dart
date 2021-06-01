@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo/chart/calender.dart';
 
 import '../model/AddTask.dart';
 import '../constrant.dart';
@@ -9,8 +10,6 @@ class DraggableSheet extends StatefulWidget {
 }
 
 class _DraggableSheetState extends State<DraggableSheet> {
-  @override
-
   // Widget build(BuildContext context) {
   //   // TODO: implement build
   //   return Padding(
@@ -66,7 +65,6 @@ class _DraggableSheetState extends State<DraggableSheet> {
   //                   ),
   //                 ),
   //               ),
-
   //             ,
   //           ],
   //         );
@@ -74,12 +72,92 @@ class _DraggableSheetState extends State<DraggableSheet> {
   //     ),
   //   );
   // }
+  String _date;
+  void initState() {
+    _date = onlyDay(DateTime.now());
+
+    super.initState();
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+            contentPadding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+            title: Text("Pick Date"),
+
+            //  Row(
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     Align(
+            //       alignment: Alignment.bottomLeft,
+            //       child: GestureDetector(
+            //         child: Icon(Icons.arrow_back),
+            //         onTap: () {
+            //           Navigator.of(context).pop(true);
+            //         },
+            //       ),
+            //     ),
+            //     Align(
+            //       alignment: Alignment.center,
+            //       child: GestureDetector(
+            //         child: Text("Pick Date"),
+            //         onTap: () {
+            //           Navigator.of(context).pop(true);
+            //         },
+            //       ),
+            //     ),
+            //   ],
+            // ),
+
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Done'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+            content: SingleChildScrollView(
+                child: Expanded(
+              child: Container(
+                width: 100000,
+                // height: 100,
+                // color: Colors.pink,
+                child: Calender(week_or_month: false),
+              ),
+            )));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("${MediaQuery.of(context).padding.top}"),
+          title: GestureDetector(
+              onTap: () {
+                print("ppressed");
+                // Dialog(
+                //     child: SingleChildScrollView(
+                //         child: Stack(
+                //             // crossAxisAlignment: CrossAxisAlignment.start,
+                //             children: <Widget>[
+                //       Calender(false),
+                //     ])));
+                // Calender obj = Calender();
+                _showMyDialog().then((value) {
+                  SendCalenderData scd = SendCalenderData();
+
+                  setState(() {
+                    _date = scd.getSeletedDate();
+                  });
+                });
+              },
+              child: Text("$_date")),
         ),
         body: SafeArea(
           child: Container(
@@ -349,3 +427,12 @@ class _DraggableSheetState extends State<DraggableSheet> {
     );
   }
 }
+
+//  actions: <Widget>[
+//   TextButton(
+//     child: const Text('Approve'),
+//     onPressed: () {
+//       Navigator.of(context).pop();
+//     },
+//   ),
+// ],

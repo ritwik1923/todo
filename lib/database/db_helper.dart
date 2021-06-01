@@ -3,7 +3,7 @@ import 'package:sqflite/sqlite_api.dart';
 import 'package:todo/model/AddTask.dart';
 // import 'package:sqlit_test/models/Todo_info.dart';
 
-final String tableTodo = 'todo';
+final String tableTodo = 'Todo';
 final String columnTitle = 'alltask';
 final String columnDateTime = 'dateTime';
 final String columnScore = 'score';
@@ -45,14 +45,14 @@ class DB_Helper {
           create table $tableTodo ( 
           $columnDateTime text primary key,
           $columnTitle text not null,
-          $columnScore integer,
+          $columnScore real
           )
         ''');
         },
       );
       return database;
     } on Exception catch (e) {
-      print(e);
+      print("error: $e");
     }
   }
 
@@ -63,7 +63,7 @@ class DB_Helper {
       print('Inserting record of ${dbHelper.dateTime} : $result');
       return true;
     } on Exception catch (e) {
-      print("data might be present so updateing it...");
+      print("data might be present so updateing it...\n\n$e\n\n");
       return updateTodo(dbHelper);
     }
     // inserting new data in database

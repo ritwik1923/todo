@@ -45,10 +45,10 @@ class AddTask {
 class StoreTask {
   final String alltask;
   final String dateTime;
-  final int score;
+  final double score;
   StoreTask({
-    this.alltask,
     this.dateTime,
+    this.alltask,
     this.score,
   });
 
@@ -56,13 +56,13 @@ class StoreTask {
   factory StoreTask.fromMap(Map<String, dynamic> json) => StoreTask(
         dateTime: json["dateTime"],
         alltask: json["alltask"],
-        score: json["score"],
+        score: json["score"] as double,
       );
   //converting to json inorder to store data
   Map<String, dynamic> toMap() => {
         "dateTime": dateTime,
         "alltask": alltask,
-        "score": score * 1000,
+        "score": score,
       };
 }
 

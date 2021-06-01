@@ -159,7 +159,7 @@ class CollapsingList extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${(kScore * 10).toStringAsPrecision(3)}",
+                          "${(kScore * 10)}",
                           style: kTextStyle(30),
                         ),
                         Text(

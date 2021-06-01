@@ -50,7 +50,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   DB_Helper db = DB_Helper();
 
-  String formatted = "";
   String onlyDay(DateTime date) {
     final DateFormat formatter = DateFormat("yyyy-MM-dd");
     return formatter.format(date);
@@ -63,7 +62,7 @@ class _MyAppState extends State<MyApp> {
     //   Navigator.pushNamed(context, "/intro");
     // });
     db.initializeDatabase().then((value) {
-      // loaddata();
+      loaddata();
       print('------database intialized $kScore');
     });
     super.initState();
@@ -91,50 +90,6 @@ class _MyAppState extends State<MyApp> {
     StoreData();
     // WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-  }
-
-  double calScore() {
-    int score = 0, total = 0;
-    ktaskdone = 0;
-    ktotaltask = 0;
-    for (int i = 0; i < item.length; i++) {
-      if (i < 1) {
-        if (item[i].isDone == true) score += 5;
-        total += 5;
-      } else if (i < 4) {
-        if (item[i].isDone == true) score += 3;
-        total += 3;
-      } else {
-        if (item[i].isDone == true) score += 1;
-        total += 1;
-      }
-      if (item[i].isDone == true) ktaskdone += 1;
-    }
-    if (total == 0) {
-      total = 1;
-    }
-    return score / total;
-  }
-
-  Future<bool> StoreData() async {
-    List<String> data = [];
-    for (int i = 0; i < item.length; i++) {
-      data.add(jsonEncode(item[i].toMap()));
-    }
-
-    // TODO: store data before exit
-    String d = "$data";
-    print("Storing:  $d");
-    // ignore: non_constant_identifier_names
-    var STodod = StoreTask(dateTime: formatted, alltask: d, score: calScore() as int);
-    print("res: $STodod");
-    bool res = await db.insertTodo(STodod);
-    if (res == true) {
-      print("stored!!..");
-      return true;
-    } else {
-      return false;
-    }
   }
 
   @override
@@ -189,27 +144,22 @@ class _MyAppState extends State<MyApp> {
                   fontSize: 20,
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
                 print("pressed");
-                StoreData();
+                // bool res = await StoreData();
+                // print(res);
                 // loaddata();
                 Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => DraggableSheet()))
                     .then((value) async {
-                  setState(() {
-                    ktaskdone = 0;
-                    ktotaltask = 0;
+                  // setState(() async {
+                  bool res = await StoreData();
+                  print("istored: $res");
 
-                    ktotaltask = item.length;
-                    if (ktotaltask == 0) {
-                      ktotaltask += 1;
-                    }
-                    kScore = calScore();
-                    StoreData();
-                    // TODO: store data before exit
-                  });
+                  // TODO: store data before exit
+                  // });
                 });
               },
             ),
@@ -260,10 +210,62 @@ class _MyAppState extends State<MyApp> {
           ktotaltask += 1;
           total = 1;
         }
-        kScore = 0.5;
+        kScore = calScore();
       });
     } else {
       print("not data");
+    }
+  }
+
+  double calScore() {
+    int score = 0, total = 0;
+    ktaskdone = 0;
+    ktotaltask = 0;
+    for (int i = 0; i < item.length; i++) {
+      if (i < 1) {
+        if (item[i].isDone == true) score += 5;
+        total += 5;
+      } else if (i < 4) {
+        if (item[i].isDone == true) score += 3;
+        total += 3;
+      } else {
+        if (item[i].isDone == true) score += 1;
+        total += 1;
+      }
+      if (item[i].isDone == true) ktaskdone += 1;
+    }
+    setState(() {
+      ktotaltask = item.length;
+
+      if (total == 0) {
+        total = 1;
+        ktotaltask += 1;
+      }
+      kScore = score / total;
+      print("score: $kScore/$ktaskdone");
+      kScore = double.parse(kScore.toStringAsPrecision(3));
+    });
+    return kScore;
+  }
+
+  Future<bool> StoreData() async {
+    List<String> data = [];
+    for (int i = 0; i < item.length; i++) {
+      data.add(jsonEncode(item[i].toMap()));
+    }
+
+    // TODO: store data before exit
+    String d = "$data";
+    print("Storing:  $d");
+    // ignore: non_constant_identifier_names
+    var STodod = StoreTask(dateTime: formatted, alltask: d, score: calScore());
+    print("res: $STodod");
+    bool res = await db.insertTodo(STodod);
+    if (res == true) {
+      print("stored!!..");
+      return true;
+    } else {
+      return false;
     }
   }
 }

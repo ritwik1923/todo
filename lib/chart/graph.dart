@@ -11,12 +11,6 @@ class Graph extends StatefulWidget {
   _GraphState createState() => _GraphState();
 }
 
-// class Item {
-//   const Item(this.name, this.icon);
-//   final String name;
-//   final Icon icon;
-// }
-
 final Color lineColor = Color(0xff0855AD);
 
 class _GraphState extends State<Graph> {
@@ -127,7 +121,7 @@ class _GraphState extends State<Graph> {
               fontWeight: FontWeight.bold,
               fontSize: 16),
           getTitles: (value) {
-            if (value.toInt() % 2 == 0)
+            if (value.toInt() % n.toInt() / 2 == 0)
               return '${value.toInt()}';
             else
               return '';
@@ -142,7 +136,7 @@ class _GraphState extends State<Graph> {
             fontSize: 15,
           ),
           getTitles: (value) {
-            if (value.toInt() % 2 == 0)
+            if (value.toInt() % n.toInt() == 0)
               return '${value.toInt()}';
             else
               return '';
@@ -158,7 +152,7 @@ class _GraphState extends State<Graph> {
             fontSize: 15,
           ),
           getTitles: (value) {
-            if (value.toInt() % 3 == 0)
+            if (value.toInt() % n.toInt() == 0)
               return '${value.toInt()}';
             else
               return '';
@@ -182,18 +176,7 @@ class _GraphState extends State<Graph> {
       maxY: min(pow(e, n) as double, 1000),
       lineBarsData: [
         LineChartBarData(
-          spots: [
-            // TODO: data here
-            for (double i = 1; i <= n; i++)
-              FlSpot(i, (pow(e, i) as double) % 1000)
-            // FlSpot(0, 3),
-            // FlSpot(2.6, 2),
-            // FlSpot(4.9, 5),
-            // FlSpot(6.8, 3.1),
-            // FlSpot(8, 4),
-            // FlSpot(9.5, 3),
-            // FlSpot(11, 4),
-          ],
+          spots: gData(n),
           isCurved: true,
           colors: gradientColors,
           barWidth: wi,
@@ -209,5 +192,15 @@ class _GraphState extends State<Graph> {
         ),
       ],
     );
+  }
+
+  List<FlSpot> gData(double n) {
+    List<FlSpot> data = [];
+    // TODO: data here
+    for (double i = 1; i <= n; i++) {
+      data.add(FlSpot(i, (pow(e, i) as double) % 1000));
+    }
+
+    return data;
   }
 }
