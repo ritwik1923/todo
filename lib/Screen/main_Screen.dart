@@ -242,8 +242,8 @@ class _MyAppState extends State<MyApp> {
         ktotaltask += 1;
       }
       kScore = score / total;
-      print("score: $kScore/$ktaskdone");
       kScore = double.parse(kScore.toStringAsPrecision(3));
+      print("score: $kScore/$ktaskdone");
     });
     return kScore;
   }
