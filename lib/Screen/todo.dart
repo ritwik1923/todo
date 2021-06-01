@@ -163,7 +163,7 @@ class CollapsingList extends StatelessWidget {
                           style: kTextStyle(30),
                         ),
                         Text(
-                          "${ktaskdone == ktotaltask && ktotaltask != 0 ? "All done" : ktotaltask == 0 ? "New day New Start" : "Still $ktaskdone left out of $ktotaltask tasks to goal"}",
+                          "${ktaskdone == ktotaltask && ktotaltask != 0 ? "All done" : ktotaltask == 0 ? "New day New Start" : "Still ${(ktotaltask - ktaskdone)} left out of $ktotaltask tasks to goal"}",
                           style: new TextStyle(
                               fontWeight: FontWeight.normal, fontSize: 15.0),
                         ),
