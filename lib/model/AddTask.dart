@@ -53,6 +53,7 @@ class StoreTask {
   });
 
   // reading data from db & storing it
+
   factory StoreTask.fromMap(Map<String, dynamic> json) => StoreTask(
         dateTime: json["dateTime"],
         alltask: json["alltask"],

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:todo/chart/calender.dart';
+import 'package:todo/database/db_helper.dart';
 
 import '../model/AddTask.dart';
 import '../constrant.dart';
@@ -73,11 +76,70 @@ class _DraggableSheetState extends State<DraggableSheet> {
   //   );
   // }
   String _date;
+  DB_Helper db = DB_Helper();
   void initState() {
     _date = onlyDay(DateTime.now());
 
     super.initState();
   }
+
+  List<AddTask> temp;
+  double calScore() {
+    int score = 0, total = 0;
+    ktaskdone = 0;
+    ktotaltask = 0;
+    for (int i = 0; i < item.length; i++) {
+      if (i < 1) {
+        if (item[i].isDone == true) score += 5;
+        total += 5;
+      } else if (i < 4) {
+        if (item[i].isDone == true) score += 3;
+        total += 3;
+      } else {
+        if (item[i].isDone == true) score += 1;
+        total += 1;
+      }
+      if (item[i].isDone == true) ktaskdone += 1;
+    }
+    setState(() {
+      ktotaltask = item.length;
+
+      if (total == 0) {
+        total = 1;
+        ktotaltask += 1;
+      }
+      kScore = score / total;
+      kScore = double.parse(kScore.toStringAsPrecision(3));
+      print("score: $kScore/$ktaskdone");
+    });
+    return kScore;
+  }
+
+  Future<bool> StoreData() async {
+    List<String> data = [];
+    for (int i = 0; i < item.length; i++) {
+      data.add(jsonEncode(item[i].toMap()));
+    }
+
+    // TODO: store data before exit
+    String d = "$data";
+    print("Storing:  $d");
+    // ignore: non_constant_identifier_names
+    var STodod = StoreTask(dateTime: _date, alltask: d, score: calScore());
+    print("res: $STodod");
+
+    bool res = await db.insertTodo(STodod);
+    if (res == true) {
+      print("stored!!..");
+      return true;
+    } else {
+      return false;
+    }
+    // if (_date != formatted) {
+    //   item = temp;
+    // }
+  }
+  // adb -d shell "run-as com.example.todo cat /data/data/com.example.todo/databasesTodo.db" > databasesTodo.db
 
   Future<void> _showMyDialog() async {
     return showDialog<void>(
@@ -133,11 +195,68 @@ class _DraggableSheetState extends State<DraggableSheet> {
     );
   }
 
+  Future<void> loaddata() async {
+    StoreTask storeddata = await db.getTodo(_date);
+    if (storeddata != null) {
+      print(
+          "${storeddata.dateTime}: ${storeddata.alltask} , ${storeddata.score}");
+
+      var x = jsonDecode(storeddata.alltask);
+      print(x);
+      print("len: ${x.length}");
+      item.clear();
+      ktaskdone = 0;
+      ktotaltask = 0;
+      int score = 0, total = 0;
+      for (int i = 0; i < x.length; i++) {
+        var xx = AddTask.fromMap(x[i]);
+        //TODO : loading screen
+        item.add(AddTask(
+            task: x[i]["task"],
+            isDone: x[i]["done"] == "true" ? true : false,
+            isSubtask: x[i]["isSubtask"] == "true" ? true : false));
+        //TODO: (DONE) load data to todo app from db
+        print("$i:   ${x[i]["done"]} ");
+      }
+      print("db Your Score: $score/$total");
+      setState(() {
+        ktotaltask = x.length;
+        if (total == 0) {
+          ktotaltask += 1;
+          total = 1;
+        }
+        kScore = storeddata.score;
+        // calScore();
+      });
+    } else {
+      print("not data");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  // Scaffold.of(context).openDrawer();
+                  //   bool res = await StoreData();
+                  // print("istored: $res");
+
+                  StoreData().then((value) {
+                    // if (_date != formatted) {
+                    //   item = temp;
+                    // }
+                  }).then((value) => Navigator.of(context).pop(true));
+                },
+                // tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+              );
+            },
+          ),
           title: GestureDetector(
               onTap: () {
                 print("ppressed");
@@ -154,10 +273,30 @@ class _DraggableSheetState extends State<DraggableSheet> {
 
                   setState(() {
                     _date = scd.getSeletedDate();
+                    loaddata();
+                    // if (_date != formatted) {
+                    //   temp = item;
+                    //   print(temp.length);
+                    //   for (int i = 0; i < temp.length; i++) {
+                    //     print(
+                    //         "${temp[i].getMarkedDone()}: ${temp[i].getTask()} ");
+                    //   }
+                    //   item.clear();
+                    // }
                   });
                 });
               },
               child: Text("$_date")),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: () {
+                // Scaffold.of(context).openDrawer();
+                // Navigator.of(context).pop(true);
+              },
+              // tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            ),
+          ],
         ),
         body: SafeArea(
           child: Container(

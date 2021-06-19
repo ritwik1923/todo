@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:todo/chart/graph.dart';
+import 'package:todo/database/db_helper.dart';
 import '../model/AddTask.dart';
 import '../constrant.dart';
 // import 'Barchart.dart';
@@ -94,6 +95,24 @@ class CollapsingList extends StatelessWidget {
                   SliverList(
                     delegate: SliverChildListDelegate(
                       [
+                        Container(
+                          child: IconButton(
+                            onPressed: () async {
+                              print(
+                                  "---------------------------------------------------------------");
+                              DB_Helper db = DB_Helper();
+                              List<StoreTask> Todos = await db.getTodos();
+                              for (int i = 0; i < Todos.length; i++) {
+                                var storeddata = Todos[i];
+                                print(
+                                    "${storeddata.dateTime}: ${storeddata.alltask} , ${storeddata.score}");
+                              }
+                              print(
+                                  "---------------------------------------------------------------");
+                            },
+                            icon: const Icon(Icons.android),
+                          ),
+                        ),
                         ConstrainedBox(
                           constraints: BoxConstraints(
                               minHeight: 266, maxHeight: 350, maxWidth: 250),

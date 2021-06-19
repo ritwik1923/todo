@@ -29,3 +29,8 @@ var routes = <String, WidgetBuilder>{
   // "/home": (BuildContext context) => HomeScreen(),
   "/intro": (BuildContext context) => CollapsingList(),
 };
+
+
+/*
+adb -d shell "run-as com.example.todo cat /data/data/com.example.todo/databasesTodo.db" > databasesTodo.db
+ */

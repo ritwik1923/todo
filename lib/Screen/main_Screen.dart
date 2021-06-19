@@ -68,29 +68,28 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      StoreData();
-      // user returned to our app
-    } else if (state == AppLifecycleState.inactive) {
-      StoreData();
-      // app is inactive
-    } else if (state == AppLifecycleState.paused) {
-      StoreData();
-      // user is about quit our app temporally
-    } else if (state == AppLifecycleState.detached) {
-      print("detach");
-      StoreData();
-      // app suspended (not used in iOS)
-    }
-  }
-
-  @override
-  void dispose() {
-    StoreData();
-    // WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   if (state == AppLifecycleState.resumed) {
+  //     StoreData();
+  //     // user returned to our app
+  //   } else if (state == AppLifecycleState.inactive) {
+  //     StoreData();
+  //     // app is inactive
+  //   } else if (state == AppLifecycleState.paused) {
+  //     StoreData();
+  //     // user is about quit our app temporally
+  //   } else if (state == AppLifecycleState.detached) {
+  //     print("detach");
+  //     StoreData();
+  //     // app suspended (not used in iOS)
+  //   }
+  // }
+  // @override
+  // void dispose() {
+  //   StoreData();
+  //   // WidgetsBinding.instance.removeObserver(this);
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -112,8 +111,7 @@ class _MyAppState extends State<MyApp> {
                   FlatButton(
                     child: Text('Yes, exit'),
                     onPressed: () {
-                      StoreData()
-                          .then((value) => Navigator.of(context).pop(true));
+                      Navigator.of(context).pop(true);
                     },
                   ),
                 ],
@@ -148,15 +146,16 @@ class _MyAppState extends State<MyApp> {
                 print("pressed");
                 // bool res = await StoreData();
                 // print(res);
-                // loaddata();
+
+                loaddata();
                 Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => DraggableSheet()))
                     .then((value) async {
                   // setState(() async {
-                  bool res = await StoreData();
-                  print("istored: $res");
+                  // bool res = await StoreData();
+                  // print("istored: $res");
 
                   // TODO: store data before exit
                   // });
@@ -210,62 +209,13 @@ class _MyAppState extends State<MyApp> {
           ktotaltask += 1;
           total = 1;
         }
-        kScore = calScore();
+        kScore = storeddata.score;
+        // calScore();
       });
     } else {
       print("not data");
     }
   }
 
-  double calScore() {
-    int score = 0, total = 0;
-    ktaskdone = 0;
-    ktotaltask = 0;
-    for (int i = 0; i < item.length; i++) {
-      if (i < 1) {
-        if (item[i].isDone == true) score += 5;
-        total += 5;
-      } else if (i < 4) {
-        if (item[i].isDone == true) score += 3;
-        total += 3;
-      } else {
-        if (item[i].isDone == true) score += 1;
-        total += 1;
-      }
-      if (item[i].isDone == true) ktaskdone += 1;
-    }
-    setState(() {
-      ktotaltask = item.length;
 
-      if (total == 0) {
-        total = 1;
-        ktotaltask += 1;
-      }
-      kScore = score / total;
-      kScore = double.parse(kScore.toStringAsPrecision(3));
-      print("score: $kScore/$ktaskdone");
-    });
-    return kScore;
-  }
-
-  Future<bool> StoreData() async {
-    List<String> data = [];
-    for (int i = 0; i < item.length; i++) {
-      data.add(jsonEncode(item[i].toMap()));
-    }
-
-    // TODO: store data before exit
-    String d = "$data";
-    print("Storing:  $d");
-    // ignore: non_constant_identifier_names
-    var STodod = StoreTask(dateTime: formatted, alltask: d, score: calScore());
-    print("res: $STodod");
-    bool res = await db.insertTodo(STodod);
-    if (res == true) {
-      print("stored!!..");
-      return true;
-    } else {
-      return false;
-    }
-  }
 }

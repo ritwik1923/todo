@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:todo/model/AddTask.dart';
 
 // final item = [];
-final List<AddTask> item = [];
+List<AddTask> item = [];
 String formatted = "";
 double barWeidth = 50;
 double barHeight = 5;
