@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/Screen/main_Screen.dart';
-import 'package:todo/Screen/todo.dart';
+import 'package:todo/Screen/HomeScreen.dart';
 import 'package:todo/constrant.dart';
 
 class SplashScreen extends StatelessWidget {

@@ -96,12 +96,12 @@ class DB_Helper {
     }
   }
 
-  Future<bool> deleteTodo(StoreTask dbHelper) async {
+  Future<bool> deleteTodo(String dateTime) async {
     var db = await this.database;
     try {
       var result = await db.delete(tableTodo,
-          where: '$columnDateTime = ?', whereArgs: [dbHelper.dateTime]);
-      print('Deleted record of ${dbHelper.dateTime} : $result');
+          where: '$columnDateTime = ?', whereArgs: [dateTime]);
+      print('Deleted record of $dateTime : $result');
       // throw 42;
       return true;
     } on Exception catch (e) {

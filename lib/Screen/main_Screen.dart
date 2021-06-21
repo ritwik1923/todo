@@ -1,18 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:todo/model/AddTask.dart';
-import 'package:todo/Screen/loading_Screen.dart';
 import 'package:todo/constrant.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:todo/Screen/draggable.dart';
-import 'package:todo/Screen/todo.dart';
+import 'package:todo/Screen/AddTaskScreen.dart';
+import 'package:todo/Screen/HomeScreen.dart';
 
 import 'package:intl/intl.dart';
 import 'package:todo/database/db_helper.dart';
 
-class Todo extends StatelessWidget {
+class MainScreen extends StatelessWidget {
   TextStyle _style = TextStyle(fontSize: 55);
   bool _isDark = true;
   ThemeData _light = ThemeData.light().copyWith(
@@ -62,34 +61,11 @@ class _MyAppState extends State<MyApp> {
     //   Navigator.pushNamed(context, "/intro");
     // });
     db.initializeDatabase().then((value) {
-      loaddata();
+      loaddata(formatted);
       print('------database intialized $kScore');
     });
     super.initState();
   }
-
-  // void didChangeAppLifecycleState(AppLifecycleState state) {
-  //   if (state == AppLifecycleState.resumed) {
-  //     StoreData();
-  //     // user returned to our app
-  //   } else if (state == AppLifecycleState.inactive) {
-  //     StoreData();
-  //     // app is inactive
-  //   } else if (state == AppLifecycleState.paused) {
-  //     StoreData();
-  //     // user is about quit our app temporally
-  //   } else if (state == AppLifecycleState.detached) {
-  //     print("detach");
-  //     StoreData();
-  //     // app suspended (not used in iOS)
-  //   }
-  // }
-  // @override
-  // void dispose() {
-  //   StoreData();
-  //   // WidgetsBinding.instance.removeObserver(this);
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -117,15 +93,10 @@ class _MyAppState extends State<MyApp> {
                 ],
               );
             });
-
-        // return value == true;
       },
       child: Scaffold(
           body: SafeArea(
-            child:
-                // SplashScreen(),
-                // Container(),
-                CollapsingList(),
+            child: HomeScreen(),
           ),
           floatingActionButton: Builder(
             builder: (context) => FloatingActionButton.extended(
@@ -142,24 +113,13 @@ class _MyAppState extends State<MyApp> {
                   fontSize: 20,
                 ),
               ),
-              onPressed: () async {
+              onPressed: () {
                 print("pressed");
-                // bool res = await StoreData();
-                // print(res);
 
-                loaddata();
-                Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DraggableSheet()))
-                    .then((value) async {
-                  // setState(() async {
-                  // bool res = await StoreData();
-                  // print("istored: $res");
-
-                  // TODO: store data before exit
-                  // });
-                });
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Todo()));
+                loaddata(formatted);
+                print("!pressed");
               },
             ),
           ),
@@ -168,8 +128,9 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Future<void> loaddata() async {
-    StoreTask storeddata = await db.getTodo(formatted);
+  Future<void> loaddata(String date) async {
+    item.clear();
+    StoreTask storeddata = await db.getTodo(date);
     if (storeddata != null) {
       print(
           "${storeddata.dateTime}: ${storeddata.alltask} , ${storeddata.score}");
@@ -177,22 +138,10 @@ class _MyAppState extends State<MyApp> {
       var x = jsonDecode(storeddata.alltask);
       print(x);
       print("len: ${x.length}");
-      item.clear();
       ktaskdone = 0;
       ktotaltask = 0;
       int score = 0, total = 0;
       for (int i = 0; i < x.length; i++) {
-        // if (i < 1) {
-        //   if (x[i]["done"] == "true") score += 5;
-        //   total += 5;
-        // } else if (i < 4) {
-        //   if (x[i]["done"] == "true") score += 3;
-        //   total += 3;
-        // } else {
-        //   if (x[i]["done"] == "true") score += 1;
-        //   total += 1;
-        // }
-        // if (x[i]["done"] == "true") ktaskdone += 1;
         var xx = AddTask.fromMap(x[i]);
         //TODO : loading screen
         item.add(AddTask(
@@ -213,9 +162,7 @@ class _MyAppState extends State<MyApp> {
         // calScore();
       });
     } else {
-      print("not data");
+      print("$date not data");
     }
   }
-
-
 }

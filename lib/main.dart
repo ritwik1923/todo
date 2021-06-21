@@ -2,7 +2,7 @@ import 'package:todo/Screen/loading_Screen.dart';
 import 'package:todo/Screen/main_Screen.dart';
 
 import 'package:flutter/material.dart';
-import 'package:todo/Screen/todo.dart';
+import 'package:todo/Screen/HomeScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SplashScreen();
           } else {
-            return Todo();
+            return MainScreen();
           }
         });
   }
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
 
 var routes = <String, WidgetBuilder>{
   // "/home": (BuildContext context) => HomeScreen(),
-  "/intro": (BuildContext context) => CollapsingList(),
+  "/intro": (BuildContext context) => HomeScreen(),
 };
 
 
