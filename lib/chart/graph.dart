@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
@@ -5,6 +6,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 // import 'package:chart_sparkline/chart_sparkline.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:todo/constrant.dart';
+import 'package:todo/database/db_helper.dart';
+import 'package:todo/model/AddTask.dart';
 
 class Graph extends StatefulWidget {
   @override
@@ -14,6 +18,14 @@ class Graph extends StatefulWidget {
 final Color lineColor = Color(0xff0855AD);
 
 class _GraphState extends State<Graph> {
+  void initState() {
+    // Future<List<FlSpot>> data = fgData(10);
+    // print(data);
+    // for (int i = 0; i < 10; i++) {}
+    super.initState();
+  }
+
+  DB_Helper db = DB_Helper();
   List<Color> gradientColors = [
     lineColor
     // lineColor
@@ -172,11 +184,11 @@ class _GraphState extends State<Graph> {
       // TODO: scaling of graph
       minX: 0,
       maxX: n,
-      minY: -100,
-      maxY: min(pow(e, n) as double, 1000),
+      minY: -1,
+      maxY: 10,
       lineBarsData: [
         LineChartBarData(
-          spots: gData(n),
+          spots: fgData(n),
           isCurved: true,
           colors: gradientColors,
           barWidth: wi,
@@ -194,13 +206,29 @@ class _GraphState extends State<Graph> {
     );
   }
 
-  List<FlSpot> gData(double n) {
-    List<FlSpot> data = [];
-    // TODO: data here
-    for (double i = 1; i <= n; i++) {
-      data.add(FlSpot(i, (pow(e, i) as double) % 1000));
-    }
+  List<FlSpot> fgData(double n) {
+    List<FlSpot> _data = [];
+    _data.clear();
+    setState(() async {
+      // TODO: data here
+      String date = formatted;
+      var now = DateTime.now();
+      // DateTime now = DateTime. now();
+      // String formattedDate = DateFormat('yyyy-MM-dd'). format(now);
+      // 2021-06-21
+      for (int i = 1; i <= n; i++) {
+        var date = DateTime(now.year, now.month, now.day - i);
+        var d = DateFormat('yyyy-MM-dd').format(date);
+        print(d);
+        StoreTask storeddata = await db.getTodo(d);
+        if (storeddata != null) {
+          _data.add(FlSpot(date.day as double, storeddata.score));
+        } else {
+          _data.add(FlSpot(date.day as double, 0.00));
+        }
+      }
+    });
 
-    return data;
+    return _data;
   }
 }

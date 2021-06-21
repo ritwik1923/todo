@@ -3,9 +3,18 @@ import 'package:todo/Screen/main_Screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:todo/Screen/HomeScreen.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(MyApp());
+
+  // var now = DateTime.now();
+
+  // for (int i = 0; i < 60; i++) {
+  //   var d = DateFormat('yyyy-MM-dd')
+  //       .format(DateTime(now.year, now.month, now.day - i));
+  //   print(d);
+  // }
 }
 
 class MyApp extends StatelessWidget {
@@ -29,7 +38,6 @@ var routes = <String, WidgetBuilder>{
   // "/home": (BuildContext context) => HomeScreen(),
   "/intro": (BuildContext context) => HomeScreen(),
 };
-
 
 /*
 adb -d shell "run-as com.example.todo cat /data/data/com.example.todo/databasesTodo.db" > databasesTodo.db
