@@ -120,7 +120,7 @@ class DB_Helper {
           .query(tableTodo, where: '$columnDateTime = ?', whereArgs: [date]);
 
       // print("${res.TodoDateTime}: ${res.title}");
-      print("is there?: ${result.isNotEmpty}");
+      // print("is there?: ${result.isNotEmpty}");
       return result.isNotEmpty ? StoreTask.fromMap(result.first) : null;
     } on Exception catch (e) {
       // print(e);

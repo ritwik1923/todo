@@ -23,7 +23,7 @@ kTextStyle(double fs) {
 }
 
 const kTodoStyle = TextStyle(
-  fontSize: 50,
+  fontSize: 45,
   fontWeight: FontWeight.bold,
   color: Colors.white,
 );

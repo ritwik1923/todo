@@ -56,6 +56,23 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  SliverAppBar makeHeader1(String headerText) {
+    return SliverAppBar(
+        pinned: true,
+        floating: false,
+        backgroundColor: Color(0xFFFFA012),
+        actions: [
+          Icon(Icons.menu),
+        ],
+        expandedHeight: 200,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: Container(
+              color: Color(0xFFFFA012),
+              child: Center(child: Text(headerText, style: kTodoStyle))),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     double size = MediaQuery.of(context).size.height;
@@ -91,7 +108,8 @@ class HomeScreen extends StatelessWidget {
                 slivers: <Widget>[
                   // Hero(tag: "Todotag", child: makeHeader('Todo')),
                   //  TODO: add hero animation
-                  makeHeader('Todo'),
+                  // makeHeader('Todo'),
+                  makeHeader1('Todo1'),
                   SliverList(
                     delegate: SliverChildListDelegate(
                       [

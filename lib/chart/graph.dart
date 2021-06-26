@@ -18,6 +18,10 @@ class Graph extends StatefulWidget {
 final Color lineColor = Color(0xff0855AD);
 
 class _GraphState extends State<Graph> {
+  List<FlSpot> data = [];
+  List<double> date = [];
+  DB_Helper db = DB_Helper();
+
   void initState() {
     // Future<List<FlSpot>> data = fgData(10);
     // print(data);
@@ -25,7 +29,6 @@ class _GraphState extends State<Graph> {
     super.initState();
   }
 
-  DB_Helper db = DB_Helper();
   List<Color> gradientColors = [
     lineColor
     // lineColor
@@ -35,7 +38,7 @@ class _GraphState extends State<Graph> {
   bool showAvg = false;
 // drop down:  https://protocoderspoint.com/flutter-drop-down-menu-list-drop-down-in-flutter/
   var items = [10, 30, 180, 365, -1];
-  double dValue = 30;
+  double dValue = 10;
   int dropdownvalue = 10;
   Widget build(BuildContext context) {
     return Stack(
@@ -133,9 +136,12 @@ class _GraphState extends State<Graph> {
               fontWeight: FontWeight.bold,
               fontSize: 16),
           getTitles: (value) {
-            if (value.toInt() % n.toInt() / 2 == 0)
-              return '${value.toInt()}';
-            else
+            if (value.toInt() % 2 == 0) {
+              print('${date[value.toInt() - 1]}');
+              //   // return '${date[value as int]}';
+              //   return 'te';
+              return '${date[value.toInt() - 1]}';
+            } else
               return '';
           },
           margin: 8,
@@ -148,9 +154,10 @@ class _GraphState extends State<Graph> {
             fontSize: 15,
           ),
           getTitles: (value) {
-            if (value.toInt() % n.toInt() == 0)
-              return '${value.toInt()}';
-            else
+            if ((value * 100).toInt() % 100 % 2 == 0) {
+              // print('${value.toDouble()}');
+              return '${value.toDouble()}';
+            } else
               return '';
           },
           reservedSize: 28,
@@ -164,9 +171,10 @@ class _GraphState extends State<Graph> {
             fontSize: 15,
           ),
           getTitles: (value) {
-            if (value.toInt() % n.toInt() == 0)
-              return '${value.toInt()}';
-            else
+            if (value.toInt() % 5 == 0) {
+              // print('${value.toDouble()}');
+              return '${value.toDouble()}';
+            } else
               return '';
           },
           reservedSize: 28,
@@ -182,13 +190,13 @@ class _GraphState extends State<Graph> {
           // Border.(color: const Color(0xff0855AD), width: 2)
           ),
       // TODO: scaling of graph
-      minX: 0,
-      maxX: n,
+      minX: 1,
+      maxX: n + 0.01 * n,
       minY: -1,
       maxY: 10,
       lineBarsData: [
         LineChartBarData(
-          spots: fgData(n),
+          spots: gDta(n),
           isCurved: true,
           colors: gradientColors,
           barWidth: wi,
@@ -206,29 +214,37 @@ class _GraphState extends State<Graph> {
     );
   }
 
-  List<FlSpot> fgData(double n) {
-    List<FlSpot> _data = [];
-    _data.clear();
-    setState(() async {
-      // TODO: data here
-      String date = formatted;
-      var now = DateTime.now();
-      // DateTime now = DateTime. now();
-      // String formattedDate = DateFormat('yyyy-MM-dd'). format(now);
-      // 2021-06-21
-      for (int i = 1; i <= n; i++) {
-        var date = DateTime(now.year, now.month, now.day - i);
-        var d = DateFormat('yyyy-MM-dd').format(date);
-        print(d);
-        StoreTask storeddata = await db.getTodo(d);
-        if (storeddata != null) {
-          _data.add(FlSpot(date.day as double, storeddata.score));
-        } else {
-          _data.add(FlSpot(date.day as double, 0.00));
-        }
-      }
-    });
+  List<FlSpot> gDta(double n) {
+    data.clear();
+    date.clear();
+    fgData(n);
+    return data;
+  }
 
-    return _data;
+  void fgData(double n) async {
+    // TODO: data here
+    var now = DateTime.now();
+
+    // 2021-06-21
+    print("fdate: $n");
+    for (int i = 1; i <= n; i++) {
+      var ddate = DateTime(now.year, now.month, now.day - i + 1);
+      var d = DateFormat('yyyy-MM-dd').format(ddate);
+      // print(d);
+      StoreTask storeddata = await db.getTodo(d);
+      if (storeddata != null) {
+        data.add(FlSpot((n - i + 1) * 1.0, storeddata.score * 10));
+        // print("${date.day * 1.0 + date.month * 0.01} : ${storeddata.score}");
+      } else {
+        data.add(FlSpot((n - i + 1) * 1.0, 0.00));
+        // print("${date.day * 1.0 + date.month * 0.01} : 0");
+      }
+      date.add(ddate.day * 1.0 + ddate.month * 0.01);
+    }
+    // data = List.from(data.reversed);
+    date = List.from(date.reversed);
+    // print("${date.length} , ${data.length} ");
+    for (int i = 0; i < n; i++) print("${data[i].x} , ${data[i].y}");
+    // return data;
   }
 }
